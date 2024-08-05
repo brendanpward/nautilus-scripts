@@ -1,0 +1,3 @@
+#!/bin/bash
+OUTPUT=$(sha256sum "$@")
+zenity --info --title "SHA256" --text "$OUTPUT"

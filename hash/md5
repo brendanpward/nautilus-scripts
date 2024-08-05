@@ -1,0 +1,3 @@
+#!/bin/bash
+OUTPUT=$(md5sum "$@")
+zenity --info --title "MD5" --text "$OUTPUT"
