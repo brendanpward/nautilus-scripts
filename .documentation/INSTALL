@@ -1,12 +1,5 @@
 INSTALL
 =======
 
-Just run install.sh.
-
-In case of failure, try manually copying the Git folder into either
-~/.gnome2/nautilus-scripts, ~/.gnome/nautilus-scripts,
-~/Nautilus/scripts or ~/.nautilus/scripts, depending on the versions
-of GNOME and Nautilus you have.
-
-The scripts are using zenity for user interaction.
-
+Browse to the nautilus scripts folder found at ~/.local/share/nautilus/scripts
+and clone the repository to this location.
