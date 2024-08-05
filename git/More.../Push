@@ -11,6 +11,6 @@ else
   exit 1
 fi
 
-$GIT $GIT_OPTS push "$@" 1>> "$OUTPUT" 2>> "$OUTPUT"
+$GIT $GIT_OPTS push $NAUTILUS_SCRIPT_CURRENT_URI 1>> "$OUTPUT" 2>> "$OUTPUT"
 _zenity_info "$?" "Unknown" "Unknown error (more information can be found at ~/.xsession-errors)"
 
