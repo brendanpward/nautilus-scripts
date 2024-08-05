@@ -10,5 +10,5 @@ See the INSTALL file for installation instructions.
 
 These scripts are based on the SVN Nautilus Scripts 0.9 written by Marius Scurtescu
 (http://marius.scurtescu.com/?p=102). They, in turn, are based on the CVS Nautilus
-Scripts written by Gavin Brown (http://jodrell.net/projects/nautilus-cvs-scripts)
-
+Scripts written by Gavin Brown (http://jodrell.net/projects/nautilus-cvs-scripts).
+They were subsequently copied from Tapio (https://github.com/tapio/nautilus-git-scripts/),
