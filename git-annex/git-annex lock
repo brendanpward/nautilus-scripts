@@ -1,0 +1,2 @@
+#!/bin/sh
+exec git-annex lock --notify-start --notify-finish -- "$@"
