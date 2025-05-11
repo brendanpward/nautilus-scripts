@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -r "`dirname "$0"`/gpg.conf" ]; then
+  . "`dirname "$0"`/gpg.conf"
+elif [ -r "`dirname "$0"`/../gpg.conf" ]; then
+  . "`dirname "$0"`/../gpg.conf"
+else
+  exit 1
+fi
+
+FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
+    -e 'N' \
+    -e 's/[^=]*name="//' \
+    -e 's/",$//' \
+    -e 'q')
+gpg --output "$FILENAME" --decrypt "$1"
+zenity --info --title "GPG: Decrypt" --text "Successfully decrypted $1"
