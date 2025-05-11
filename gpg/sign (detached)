@@ -9,4 +9,4 @@ else
 fi
 
 gpg --output "$1".sig --sign "$1"
-zenity --info --title "GPG: Sign" --text "Successfully signed $1"
+zenity --info --title "GPG: Sign" --text "Successfully signed $1" --icon "$ZENITY_WINDOW_ICON"
