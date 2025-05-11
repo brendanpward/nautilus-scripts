@@ -8,5 +8,5 @@ else
   exit 1
 fi
 
-gpg --output "$1".sig --sign "$1"
+gpg --output "$1".sig --detach-sig "$1"
 zenity --info --title "GPG: Sign" --text "Successfully signed $1" --icon "$ZENITY_WINDOW_ICON"
