@@ -1,3 +1,12 @@
 #!/bin/bash
-OUTPUT=$(sha256sum "$@")
-zenity --info --title "SHA256" --text "$OUTPUT"
+
+if [ -r "`dirname "$0"`/hash.conf" ]; then
+  . "`dirname "$0"`/hash.conf"
+elif [ -r "`dirname "$0"`/../hash.conf" ]; then
+  . "`dirname "$0"`/../hash.conf"
+else
+  exit 1
+fi
+
+sha256sum "$@" 1>> "$OUTPUT" 2>> "$OUTPUT"
+_zenity_info "$?" "Unknown" "Unknown error"
