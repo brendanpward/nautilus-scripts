@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -r "`dirname "$0"`/gpg.conf" ]; then
+  . "`dirname "$0"`/gpg.conf"
+elif [ -r "`dirname "$0"`/../gpg.conf" ]; then
+  . "`dirname "$0"`/../gpg.conf"
+else
+  exit 1
+fi
+
+gpg --output "$1".sig --sign "$1"
+zenity --info --title "GPG: Sign" --text "Successfully signed $1"
