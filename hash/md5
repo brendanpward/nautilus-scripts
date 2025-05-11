@@ -1,3 +1,12 @@
-#!/bin/bash
-OUTPUT=$(md5sum "$@")
-zenity --info --title "MD5" --text "$OUTPUT"
+#!/bin/sh
+
+if [ -r "`dirname "$0"`/hash.conf" ]; then
+  . "`dirname "$0"`/hash.conf"
+elif [ -r "`dirname "$0"`/../hash.conf" ]; then
+  . "`dirname "$0"`/../hash.conf"
+else
+  exit 1
+fi
+
+md5sum "$@" 1>> "$OUTPUT" 2>> "$OUTPUT"
+_zenity_info "$?" "Unknown" "Unknown error"
