@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -r "`dirname "$0"`/gpg.conf" ]; then
+  . "`dirname "$0"`/gpg.conf"
+elif [ -r "`dirname "$0"`/../gpg.conf" ]; then
+  . "`dirname "$0"`/../gpg.conf"
+else
+  exit 1
+fi
+
+MESSAGE=$(_zenity_entry_text "Enter encryption recipient's email address:")
+if [ "$?" -eq 0 ]; then
+  gpg --output "$1".gpg --encrypt --recipient "$MESSAGE" "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
+  _zenity_info "$?" "Successfully encrypted" "Unknown error (more information can be found at ~/.xsession-errors)"
+fi
