@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# This script decrypts a file and opens it with the default editor.
+# When the program that opened the file is closed, the file is
+# checked for any changes.  If no changes have occured, the file
+# is simply closed.  If changes occurred, then the file is
+# re-encrypted.
+
+filetype=$(xdg-mime query filetype $1)
+editor=$(grep -i ^exec $(locate -n 1 $(xdg-mime query $filetype |
+                        cut -d';' -f 1)) | 
+           perl -pe 's/.*=(\S+).*/$1/') 
+$editor $1
