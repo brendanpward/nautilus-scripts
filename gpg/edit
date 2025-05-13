@@ -6,8 +6,6 @@
 # is simply closed.  If changes occurred, then the file is
 # re-encrypted.
 
-filetype=$(xdg-mime query filetype $1)
-editor=$(grep -i ^exec $(locate -n 1 $(xdg-mime query default $filetype |
-                        cut -d';' -f 1)) | 
-           perl -pe 's/.*=(\S+).*/$1/') 
+filetype=$(xdg-mime query filetype "$1")
+editor=$(grep "$filetype" "`dirname \"$0\"`/editors" | cut -f 2)
 $editor $1
