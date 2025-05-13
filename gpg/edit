@@ -7,7 +7,7 @@
 # re-encrypted.
 
 filetype=$(xdg-mime query filetype $1)
-editor=$(grep -i ^exec $(locate -n 1 $(xdg-mime query $filetype |
+editor=$(grep -i ^exec $(locate -n 1 $(xdg-mime query default $filetype |
                         cut -d';' -f 1)) | 
            perl -pe 's/.*=(\S+).*/$1/') 
 $editor $1
