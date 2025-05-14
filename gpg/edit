@@ -14,6 +14,10 @@ else
   exit 1
 fi
 
+# Look to see who the file was originally encrypted for so that we can encrypt
+# it for them again.
+RECIPIENTS=$(gpg --list-packets --list-only $1 | sed 's/^.*keyid//')
+
 # Decrypt the file and place it in the /tmp folder
 ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
     -e 'N' \
