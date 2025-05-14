@@ -13,5 +13,10 @@ FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
     -e 's/[^=]*name="//' \
     -e 's/",$//' \
     -e 'q')
+if [ -z "$FILENAME" ]
+then
+  # Filename is empty
+  FILENAME=$(sed 's/\.[^.]*$//' <<<$1)
+fi
 gpg --output "$FILENAME" --decrypt "$1"
 zenity --info --title "GPG: Decrypt" --text "Successfully decrypted $1" --icon "$ZENITY_WINDOW_ICON"
