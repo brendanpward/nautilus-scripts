@@ -51,11 +51,11 @@ then
   zenity --info --title "No Associated Editor" --text "There is no associated editor for this filetype($filetype).  Please add it to `dirname \"$0\"`/editors"
 else
   # Open the file
-  $editor /tmp/$ENCRYPTED_FILENAME
+  $editor "/tmp/$ENCRYPTED_FILENAME"
 fi
 
 # Take another hash of the file after editing is complete
-CHECKSUM_AFTER=$(sha256sum /tmp/$ENCRYPTED_FILENAME | cut -f 1 -d " ")
+CHECKSUM_AFTER=$(sha256sum "/tmp/$ENCRYPTED_FILENAME" | cut -f 1 -d " ")
 
 # Check to see if the file has changed
 if [ $CHECKSUM_BEFORE != $CHECKSUM_AFTER ]
@@ -74,18 +74,18 @@ then
   do
     ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient $line"
   done <<< "$RECIPIENTS"
-  ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND /tmp/$ENCRYPTED_FILENAME"
+  ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND \"/tmp/$ENCRYPTED_FILENAME\""
   $ENCRYPTION_COMMAND
 
   if [ $? -eq 0 ]
   then
     # Encryption command was successful, delete the temporary file
-    rm -f /tmp/$ENCRYPTED_FILENAME
+    rm -f "/tmp/$ENCRYPTED_FILENAME"
     zenity --info --title "Success" --text "File successfully encrypted" --icon "$ZENITY_WINDOW_ICON"
   else
     zenity --info --title "Failure" --text "Failed to encrypt the file.  The temporary file is located at /tmp/$ENCRYPTED_FILENAME" --icon "$ZENITY_WINDOW_ICON"
   fi
 else
-  rm -f /tmp/$ENCRYPTED_FILENAME
+  rm -f "/tmp/$ENCRYPTED_FILENAME"
   zenity --info --title "No Change" --text "No change was made to the file" --icon "$ZENITY_WINDOW_ICON"
 fi
