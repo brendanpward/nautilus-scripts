@@ -49,3 +49,26 @@ else
   # Open the file
   $editor /tmp/$ENCRYPTED_FILENAME
 fi
+
+# Save the file back to its original location
+# Build the encryption command
+ENCRYPTION_COMMAND="gpg --yes --output $1 --encrypt"
+if [ GPG_SIGN ]
+then
+  # If automatic signing is turned on, then sign
+  ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --sign"
+fi
+# For each key in $RECIPIENTS, append --recipient [key] to $ENCRYPTION_COMMAND
+ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient 4FEBBD7E196979AE"
+ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient 04460CEAD4649468"
+ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND /tmp/$ENCRYPTED_FILENAME"
+$ENCRYPTION_COMMAND
+
+if [ $? -eq 0 ]
+then
+  # Encryption command was successful, delete the temporary file
+  rm -f /tmp/$ENCRYPTED_FILENAME
+  zenity --info --title "Success" --text "File successfully encrypted" --icon "$ZENITY_WINDOW_ICON"
+else
+  zenity --info --title "Failure" --text "Failed to encrypt the file.  The temporary file is located at /tmp/$ENCRYPTED_FILENAME" --icon "$ZENITY_WINDOW_ICON"
+fi
