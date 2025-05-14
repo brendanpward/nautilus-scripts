@@ -65,7 +65,7 @@ do
 done <<< "$RECIPIENTS"
 ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND /tmp/$ENCRYPTED_FILENAME"
 zenity --info --title "Success" --text "$ENCRYPTION_COMMAND" --icon "$ZENITY_WINDOW_ICON"
-# $ENCRYPTION_COMMAND
+$ENCRYPTION_COMMAND
 
 if [ $? -eq 0 ]
 then
