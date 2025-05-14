@@ -46,7 +46,8 @@ rc=$?
 editor=$(echo -e "$editor" | cut -f 2)
 if [ $rc -eq 1 ]
 then
-  # String is empty.  No associated editor.  Alert the user.
+  # String is empty.  No associated editor.  Delete the temporary file and alert the user.
+  rm -f "/tmp/$ENCRYPTED_FILENAME"
   zenity --info --title "No Associated Editor" --text "There is no associated editor for this filetype($filetype).  Please add it to `dirname \"$0\"`/editors"
 else
   # Open the file
