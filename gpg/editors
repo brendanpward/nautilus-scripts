@@ -1,3 +1,3 @@
 text/plain	gnome-text-editor
-text/markdown	gvim -f -n
-text/*	vi
+text/markdown	flatpak run com.github.marktext.marktext
+text/*	gvim -f -n
