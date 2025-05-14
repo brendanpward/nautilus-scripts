@@ -6,7 +6,27 @@
 # is simply closed.  If changes occurred, then the file is
 # re-encrypted.
 
-filetype=$(xdg-mime query filetype "$1")
+
+# Decrypt the file and place it in the /tmp folder
+ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
+    -e 'N' \
+    -e 's/[^=]*name="//' \
+    -e 's/",$//' \
+    -e 'q')
+if [ -z "$ENCRYPTED_FILENAME" ]
+then
+  # Filename is empty
+  ENCRYPTED_FILENAME=$(sed 's/\.[^.]*$//' <<<$1)
+fi
+# Check to see if this file already exists.  If it does, warn the user and exit.
+if test -f "/tmp/$ENCRYPTED_FILENAME"; then
+  zenity --info --title "Warning" --text "Temporary file already exists.  Cannot continue."
+  exit
+fi
+gpg --output "/tmp/$ENCRYPTED_FILENAME" --decrypt "$1"
+
+# Open the file with the default editor
+filetype=$(xdg-mime query filetype "/tmp/$ENCRYPTED_FILENAME")
 editor=$(grep "$filetype" "`dirname \"$0\"`/editors")
 rc=$?
 editor=$(echo -e "$editor" | cut -f 2)
@@ -16,5 +36,5 @@ then
   zenity --info --title "No Associated Editor" --text "There is no associated editor for this filetype($filetype).  Please add it to `dirname \"$0\"`/editors"
 else
   # Open the file
-  $editor $1
+  $editor /tmp/$ENCRYPTED_FILENAME
 fi
