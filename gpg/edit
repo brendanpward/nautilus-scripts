@@ -6,6 +6,13 @@
 # is simply closed.  If changes occurred, then the file is
 # re-encrypted.
 
+if [ -r "`dirname "$0"`/gpg.conf" ]; then
+  . "`dirname "$0"`/gpg.conf"
+elif [ -r "`dirname "$0"`/../gpg.conf" ]; then
+  . "`dirname "$0"`/../gpg.conf"
+else
+  exit 1
+fi
 
 # Decrypt the file and place it in the /tmp folder
 ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
@@ -20,7 +27,7 @@ then
 fi
 # Check to see if this file already exists.  If it does, warn the user and exit.
 if test -f "/tmp/$ENCRYPTED_FILENAME"; then
-  zenity --info --title "Warning" --text "Temporary file already exists.  Cannot continue."
+  zenity --info --title "Warning" --text "Temporary file already exists.  Cannot continue." --icon "$ZENITY_WINDOW_ICON"
   exit
 fi
 gpg --output "/tmp/$ENCRYPTED_FILENAME" --decrypt "$1"
