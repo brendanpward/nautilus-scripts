@@ -16,7 +16,7 @@ fi
 
 # Look to see who the file was originally encrypted for so that we can encrypt
 # it for them again.
-RECIPIENTS=$(gpg --list-packets --list-only $1 | sed 's/^.*keyid//')
+RECIPIENTS=$(gpg --list-packets --list-only $1 | grep keyid | sed 's/^.*keyid//')
 
 # Decrypt the file and place it in the /tmp folder
 ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
@@ -59,10 +59,13 @@ then
   ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --sign"
 fi
 # For each key in $RECIPIENTS, append --recipient [key] to $ENCRYPTION_COMMAND
-ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient 4FEBBD7E196979AE"
-ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient 04460CEAD4649468"
+while IFS= read -r line
+do
+  ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND --recipient $line"
+done <<< "$RECIPIENTS"
 ENCRYPTION_COMMAND="$ENCRYPTION_COMMAND /tmp/$ENCRYPTED_FILENAME"
-$ENCRYPTION_COMMAND
+zenity --info --title "Success" --text "$ENCRYPTION_COMMAND" --icon "$ZENITY_WINDOW_ICON"
+# $ENCRYPTION_COMMAND
 
 if [ $? -eq 0 ]
 then
