@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# This script decrypts a file and opens it with the viewer specified
+# in the viewer file. It monitors for the viewing software's closure
+# and then deletes the temporary file when done.
+
+if [ -r "`dirname "$0"`/gpg.conf" ]; then
+  . "`dirname "$0"`/gpg.conf"
+elif [ -r "`dirname "$0"`/../gpg.conf" ]; then
+  . "`dirname "$0"`/../gpg.conf"
+else
+  exit 1
+fi
+
+# Decrypt the file and place it in the /tmp folder
+ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
+    -e 'N' \
+    -e 's/[^=]*name="//' \
+    -e 's/",$//' \
+    -e 'q')
+if [ -z "$ENCRYPTED_FILENAME" ]
+then
+  # Filename is empty
+  ENCRYPTED_FILENAME=$(sed 's/\.[^.]*$//' <<<$1)
+fi
+gpg --yes --output "/tmp/$ENCRYPTED_FILENAME" --decrypt "$1"
+
+# Set permissions to ensure no other system users can read the file while we're editing it
+chmod o-rwx,g-rwx "/tmp/$ENCRYPTED_FILENAME"
+
+# Open the file with the default editor
+filetype=$(xdg-mime query filetype "/tmp/$ENCRYPTED_FILENAME")
+viewer=$(grep "$filetype" "`dirname \"$0\"`/viewers")
+rc=$?
+viewer=$(echo -e "$viewer" | cut -f 2)
+if [ $rc -eq 1 ]
+then
+  # String is empty.  No associated viewer.  Delete the temporary file and alert the user.
+  rm -f "/tmp/$ENCRYPTED_FILENAME"
+  zenity --info --title "No Associated Viewer" --text "There is no associated viewer for this filetype($filetype).  Please add it to `dirname \"$0\"`/viewers"
+else
+  # Open the file
+  $viewer "/tmp/$ENCRYPTED_FILENAME"
+fi
+
+# Viewer has been closed, delete the temporary file
+rm -f "/tmp/$ENCRYPTED_FILENAME"
+if [ $? -eq 0 ]
+then
+  zenity --info --title "Success" --text "Temporary file successfully deleted." --icon "$ZENITY_WINDOW_ICON"
+else
+  zenity --info --title "Failure" --text "Temporary file was not deleted. Ensure that it no longer exists in the /tmp folder." --icon "$ZENITY_WINDOW_ICON"
+fi

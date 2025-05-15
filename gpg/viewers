@@ -1,0 +1,4 @@
+application/pdf	evince
+text/plain	gnome-text-editor
+text/markdown	flatpak run com.github.marktext.marktext
+text/*	gvim -f -n
