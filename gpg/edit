@@ -23,6 +23,14 @@ then
   exit 2
 fi
 
+# Look to see if the file should be ASCII armoured or binary so that we can re-encrypt it
+# in the same way later
+case "$1" in
+  *.pgp) ARMOUR_SWITCH="" ;;
+  *.gpg) ARMOUR_SWITCH="" ;;
+  *.asc) ARMOUR_SWITCH="--armor " ;;
+esac
+
 # Look to see who the file was originally encrypted for so that we can encrypt
 # it for them again.
 RECIPIENTS=$(gpg --list-packets --list-only "$1" | grep keyid | sed 's/^.*keyid//')
@@ -99,7 +107,7 @@ then
   do
     RECIPIENT_SWITCH="$RECIPIENT_SWITCH --recipient $line"
   done <<< "$RECIPIENTS"
-  gpg --yes --output "$1" --encrypt $SIGN_SWITCH$RECIPIENT_SWITCH "/tmp/$ENCRYPTED_FILENAME"
+  gpg --yes --output "$1" --encrypt $SIGN_SWITCH$ARMOUR_SWITCH$RECIPIENT_SWITCH "/tmp/$ENCRYPTED_FILENAME"
 
   if [ $? -eq 0 ]
   then
