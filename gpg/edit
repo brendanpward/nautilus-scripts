@@ -37,7 +37,7 @@ fi
 gpg --output "/tmp/$ENCRYPTED_FILENAME" --decrypt "$1"
 
 # Take a hash of the file
-CHECKSUM_BEFORE=$(sha256sum /tmp/$ENCRYPTED_FILENAME | cut -f 1 -d " ")
+CHECKSUM_BEFORE=$(sha256sum "/tmp/$ENCRYPTED_FILENAME" | cut -f 1 -d " ")
 
 # Set permissions to ensure nobody can read the file while we're editing it
 chmod o-rwx,g-rwx "/tmp/$ENCRYPTED_FILENAME"
