@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mimetype=$(xdg-mime query filetype "$@")
+zenity --info --title "mime type" --text "$mimetype"
