@@ -1,0 +1,93 @@
+#!/bin/bash
+
+FIELD_SEPARATOR=$'\r'          # The main field separator.
+GUI_BOX_HEIGHT=550             # Height of the GUI dialog boxes.
+GUI_BOX_WIDTH=900              # Width of the GUI dialog boxes.
+
+_str_remove_empty_tokens() {
+    # This function removes empty tokens from a string, ensuring it is compact
+    # and well-formed.
+    #
+    # Parameters:
+    #   - $1 (input_str): The input string containing tokens separated by
+    #     $FIELD_SEPARATOR.
+
+    local input_str=$1
+    input_str=$(tr -s "$FIELD_SEPARATOR" <<<"$input_str")
+    input_str=$(sed "s|$FIELD_SEPARATOR$||" <<<"$input_str")
+
+    printf "%s" "$input_str"
+}
+
+_convert_text_to_delimited_string() {
+    # This function converts newline-separated text into a delimited string of
+    # items.
+    #
+    # Parameters:
+    #   - $1 (input_items): A string containing items separated by newlines.
+    #
+    # Returns:
+    #   - A string containing the items separated by the 'FIELD_SEPARATOR'
+    #   variable.
+
+    local input_items=$1
+    local new_line="'\$'\\\n''"
+
+    input_items=$(tr "\n" "$FIELD_SEPARATOR" <<<"$input_items")
+    input_items=$(sed -z "s|$new_line|\n|g" <<<"$input_items")
+    input_items=$(_str_remove_empty_tokens "$input_items")
+
+    printf "%s" "$input_items"
+}
+
+_get_items_count() {
+    # This function counts the number of items in a string, where items are
+    # separated by a specific field separator. It assumes that the input string
+    # contains a list of items separated by the value of the variable
+    # $FIELD_SEPARATOR.
+    #
+    # Parameters:
+    # - $1 (input_files): A string containing a list of items separated by
+    #   the defined $FIELD_SEPARATOR.
+
+    local input_files=$1
+    local files_count=0
+
+    if [[ -n "$input_files" ]]; then
+        files_count=$(tr -cd "$FIELD_SEPARATOR" <<<"$input_files" | wc -c)
+        ((files_count++))
+    fi
+
+    printf "%s" "$files_count"
+}
+
+users=""
+users=$(gpg --list-public-keys --with-colons 2>/dev/null | grep --ignore-case "^uid" | cut -d ':' -f 6,8,10)
+users=$(awk -F: '{ printf "%s ",$3; system("echo -n `date -d @" $1 " +\"%Y-%m-%d\"`"); printf " %s\n",$2}' <<<$users)
+# users=$(sed -E s/<<<$users)
+# date -d @1727584941 +"%Y-%m-%d"
+
+users=$(_convert_text_to_delimited_string "$users")
+zenity_user_list=()
+
+user=""
+IFS=$FIELD_SEPARATOR
+for user in $users; do
+    if (($(_get_items_count "$users") == 1)); then
+        zenity_user_list+=(TRUE "$user")
+    else
+        zenity_user_list+=(FALSE "$user")
+    fi
+done
+
+TEMP_DATA_TASK=$(zenity \
+    --list \
+    --checklist \
+    --title="Select users" \
+    --text="Select one or more users from the list below." \
+    --column="Select" \
+    --column="User" "${zenity_user_list[@]}" \
+    --width="$GUI_BOX_WIDTH" \
+    --height="$GUI_BOX_HEIGHT" \
+    --separator="$FIELD_SEPARATOR" 2>/dev/null)
+
