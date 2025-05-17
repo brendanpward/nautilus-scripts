@@ -1,3 +1,11 @@
 text/plain	gnome-text-editor
 text/markdown	flatpak run com.github.marktext.marktext
-text/*	gvim -f -n
+text/*	gvim -n -f
+application/gzip	file-roller
+application/x-gzip	file-roller
+application/x-xz-compressed-tar	file-roller
+application/zip	file-roller
+application/x-zip-compressed	file-roller
+application/x-7z-compressed	file-roller
+application/zstd	file-roller
+application/*	gvim -n -f
