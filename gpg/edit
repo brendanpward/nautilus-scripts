@@ -49,9 +49,21 @@ rc=$?
 editor=$(echo -e "$editor" | cut -f 2)
 if [ $rc -eq 1 ]
 then
-  # String is empty.  No associated editor.  Delete the temporary file and alert the user.
-  rm -f "/tmp/$ENCRYPTED_FILENAME"
-  zenity --info --title "No Associated Editor" --text "There is no associated editor for this filetype($filetype).  Please add it to `dirname \"$0\"`/editors"
+  # String is empty.  No specific editor for this mime type. Check to see if there is a generic editor.
+  genericFiletype=$(echo $filetype | cut -d "/" -f 1)
+  editor=$(grep "$genericFiletype/\*" "`dirname \"$0\"`/editors")
+  rc=$?
+  editor=$(echo -e "$editor" | cut -f 2)
+  if [ $rc -eq 1 ]
+  then
+    # String is empty.  No generic editor for this mime type.
+    # Delete the temporary file and alert the user.
+    rm -f "/tmp/$ENCRYPTED_FILENAME"
+    zenity --info --title "No Associated Editor" --text "There is no associated editor for this filetype($filetype).  Please add it to `dirname \"$0\"`/editors"
+  else
+    # Open the file
+    $editor "/tmp/$ENCRYPTED_FILENAME"
+  fi
 else
   # Open the file
   $editor "/tmp/$ENCRYPTED_FILENAME"
