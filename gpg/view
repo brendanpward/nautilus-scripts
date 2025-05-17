@@ -12,6 +12,15 @@ else
   exit 1
 fi
 
+# Check to see if the file that has been passed to this command is a GPG encrypted file
+# If not, alert the user to their error and exit
+OPENFILETYPE=$(xdg-mime query filetype "$1")
+if [ $OPENFILETYPE != "application/pgp-encrypted" ]
+then
+  zenity --info --title "Error" --text "The selected file is not a GPG encrypted file.  Unable to decrypt."
+  exit 2
+fi
+
 # Decrypt the file and place it in the /tmp folder
 ENCRYPTED_FILENAME=$(gpg --list-packets "$1" | sed -e '/^:literal data packet:$/!d' \
     -e 'N' \
