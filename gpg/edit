@@ -78,7 +78,7 @@ then
   # File has changed
   # Save the file back to its original location
   # Build the encryption command
-  ENCRYPTION_COMMAND="gpg --yes --output $1 --encrypt"
+  ENCRYPTION_COMMAND="gpg --yes --output "$1" --encrypt"
   if [ GPG_SIGN ]
   then
     # If automatic signing is turned on, then sign
