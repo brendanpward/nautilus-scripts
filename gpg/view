@@ -44,9 +44,21 @@ rc=$?
 viewer=$(echo -e "$viewer" | cut -f 2)
 if [ $rc -eq 1 ]
 then
-  # String is empty.  No associated viewer.  Delete the temporary file and alert the user.
-  rm -f "/tmp/$ENCRYPTED_FILENAME"
-  zenity --info --title "No Associated Viewer" --text "There is no associated viewer for this filetype($filetype).  Please add it to `dirname \"$0\"`/viewers"
+  # String is empty.  No specific viewer for this mime type.  Check to see if there is a generic viewer application.
+  genericFiletype=$(echo $filetype | cut -d "/" -f 1)
+  viewer=$(grep "$genericFiletype/\*" "`dirname \"$0\"`/viewers")
+  rc=$?
+  viewer=$(echo -e "$viewer" | cut -f 2)
+  if [ $rc -eq 1 ]
+  then
+    # String is empty.  No generic viewer for this mime type.
+    # Delete the temporary file and alert the user
+    rm -f "/tmp/$ENCRYPTED_FILENAME"
+    zenity --info --title "No Associated Viewer" --text "There is no associated viewer for this filetype($filetype).  Please add it to `dirname \"$0\"`/viewers"
+  else
+    # Open the file
+    $viewer "/tmp/$ENCRYPTED_FILENAME"
+  fi
 else
   # Open the file
   $viewer "/tmp/$ENCRYPTED_FILENAME"
