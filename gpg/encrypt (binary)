@@ -8,8 +8,17 @@ else
   exit 1
 fi
 
-MESSAGE=$(_zenity_entry_text "Enter encryption recipient's email address:")
+RECIPIENTS=$(_select_public_keys)
+
+# For each key in $RECIPIENTS, append --recipient [key] to $ENCRYPTION_COMMAND
+while IFS= read -r line
+do
+  RECIPIENT_SWITCH="$RECIPIENT_SWITCH --recipient $line"
+done <<< "$RECIPIENTS"
+set -x
+# MESSAGE=$(_zenity_entry_text "Enter encryption recipient's email address:")
 if [ "$?" -eq 0 ]; then
-  gpg --output "$1".gpg --encrypt --recipient "$MESSAGE" "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
+  gpg --output "$1".gpg --encrypt $RECIPIENT_SWITCH "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
   _zenity_info "$?" "Successfully encrypted" "Unknown error (more information can be found at ~/.xsession-errors)"
 fi
+set +x
