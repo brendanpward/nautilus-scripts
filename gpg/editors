@@ -9,3 +9,11 @@ application/x-zip-compressed	file-roller
 application/x-7z-compressed	file-roller
 application/zstd	file-roller
 application/*	gvim -n -f
+application/vnd.oasis.opendocument.text	libreoffice
+application/msword	libreoffice
+application/vnd.openxmlformats-officedocument.wordprocessingml.document	libreoffice
+application/vnd.oasis.opendocument.spreadsheet	libreoffice
+application/vnd.ms-excel	libreoffice
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet	libreoffice
+application/vnd.oasis.opendocument.presentation	libreoffice
+application/vnd.openxmlformats-officedocument.presentationml.presentation	libreoffice
