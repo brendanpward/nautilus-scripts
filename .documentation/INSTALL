@@ -2,4 +2,4 @@ INSTALL
 =======
 
 Browse to the nautilus scripts folder found at ~/.local/share/nautilus/scripts
-and clone the repository to this location.
+and clone the repository to this location with `git clone <repository> .`
