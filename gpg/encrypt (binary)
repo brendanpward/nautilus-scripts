@@ -10,6 +10,11 @@ fi
 
 RECIPIENTS=$(_select_public_keys)
 
+if [ -z "$RECIPIENTS" ]; then
+  _zenity_info "1" "" "No key selected.  Unable to encrypt file."
+  exit 1
+fi
+
 # For each key in $RECIPIENTS, append --recipient [key] to $ENCRYPTION_COMMAND
 while IFS= read -r line
 do
