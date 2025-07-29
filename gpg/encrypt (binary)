@@ -16,7 +16,7 @@ do
   RECIPIENT_SWITCH="$RECIPIENT_SWITCH --recipient $line"
 done <<< "$RECIPIENTS"
 set -x
-# MESSAGE=$(_zenity_entry_text "Enter encryption recipient's email address:")
+
 if [ "$?" -eq 0 ]; then
   gpg --output "$1".gpg --encrypt $RECIPIENT_SWITCH "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
   _zenity_info "$?" "Successfully encrypted" "Unknown error (more information can be found at ~/.xsession-errors)"
