@@ -1,0 +1,4 @@
+#!/bin/bash
+
+tar -cf tarball.tar "$@"
+zenity --info --title "Archive" --text "tar file created"
