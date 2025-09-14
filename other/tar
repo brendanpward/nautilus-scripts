@@ -1,4 +1,11 @@
 #!/bin/bash
 
-tar -cf tarball.tar "$@"
-zenity --info --title "Archive" --text "tar file created"
+FILENAME=$(zenity --entry --title "File Name"  --text "Please enter a name for the tar file that you want to create:")
+
+tar -cf "$FILENAME".tar "$@"
+if [ $? -eq 0 ]
+then
+	zenity --info --title "Archive" --text "$FILENAME.tar created successfully"
+else
+	zenity --info --title "Error" --text "An error occurred.  tar file was not created."
+fi
