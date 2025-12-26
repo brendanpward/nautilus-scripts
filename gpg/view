@@ -34,6 +34,12 @@ then
 fi
 gpg --yes --output "/tmp/$ENCRYPTED_FILENAME" --decrypt "$1"
 
+if [ "$?" -eq 2 ]
+then
+  zenity --info --title "Error" --text "Unable to decrypt file. Password or decryption key not provided."
+  exit 3
+fi
+
 # Set permissions to ensure no other system users can read the file while we're editing it
 chmod o-rwx,g-rwx "/tmp/$ENCRYPTED_FILENAME"
 
