@@ -18,5 +18,6 @@ then
   # Filename is empty
   FILENAME=$(sed 's/\.[^.]*$//' <<<$1)
 fi
-gpg --output "$FILENAME" --decrypt "$1"
+gpg --output "$FILENAME" --decrypt "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
+_zenity_info "$?" "Unknown" "Unknown error"
 zenity --info --title "GPG: Decrypt" --text "Successfully decrypted $1" --icon "$ZENITY_WINDOW_ICON"
