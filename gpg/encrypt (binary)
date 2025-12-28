@@ -21,9 +21,8 @@ do
   RECIPIENT_SWITCH="$RECIPIENT_SWITCH --recipient $line"
 done <<< "$RECIPIENTS"
 set -x
-
 if [ "$?" -eq 0 ]; then
-  gpg --output "$1".gpg --encrypt $RECIPIENT_SWITCH "$1" 1>> "$OUTPUT" 2>> "$OUTPUT"
-  _zenity_info "$?" "Successfully encrypted" "Unknown error (more information can be found at ~/.xsession-errors)"
+  files=("$@")
+  _encrypt_files false "$RECIPIENT_SWITCH" files
 fi
 set +x
