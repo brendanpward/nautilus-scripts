@@ -1,0 +1,28 @@
+#!/bin/bash
+ 
+# This script creates a blank .xopp file and attaches a
+# PDF as a background without opening.
+
+if [ -r "`dirname "$0"`/xournal.conf" ]; then
+  . "`dirname "$0"`/xournal.conf"
+elif [ -r "`dirname "$0"`/../xournal.conf" ]; then
+  . "`dirname "$0"`/../xournal.conf"
+else
+  exit 1
+fi
+
+set -x
+for file in "$@"; do
+  if [[ "application/pdf" = $(xdg-mime query filetype "$file") ]]; then
+    filename=$(basename "$file" .pdf)
+    if [[ $FLATPAK ]]; then
+      $XOURNAL --attach-mode --save="$filename".xopp @@ "$file" @@
+    else
+      $XOURNAL --attach-mode --save="$filename".xopp "$file"
+    fi
+  else
+    # File is not a PDF.  Throw an error.
+    _zenity_info 1 "" "Error.  $(basename "$file") is not a PDF"
+  fi
+done
+set +x
