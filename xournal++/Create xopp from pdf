@@ -15,11 +15,7 @@ set -x
 for file in "$@"; do
   if [[ "application/pdf" = $(xdg-mime query filetype "$file") ]]; then
     filename=$(basename "$file" .pdf)
-    if [[ $FLATPAK ]]; then
-      $XOURNAL --attach-mode --save="$filename".xopp @@ "$file" @@
-    else
-      $XOURNAL --attach-mode --save="$filename".xopp "$file"
-    fi
+    $XOURNAL --attach-mode --save="$filename.xopp" "$file"
   else
     # File is not a PDF.  Throw an error.
     _zenity_info 1 "" "Error.  $(basename "$file") is not a PDF"
